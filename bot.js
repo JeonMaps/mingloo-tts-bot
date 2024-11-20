@@ -12,7 +12,7 @@ const client = new Client({
     ],
 });
 
-const TOKEN = 'MTMwODc2NjAyMTI4MDMzNzkzMA.GKcvIJ.qLy6r1u8pbVGubHQA-0C5iJkDJG0Zw5PkZrdkM'; // Use environment variable for the bot token
+const TOKEN = 'BOT TOKEN'; // Use environment variable for the bot token
 
 client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
