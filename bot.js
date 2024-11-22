@@ -12,7 +12,7 @@ const client = new Client({
   ],
 });
 
-const TOKEN = ''; // Use environment variable for the bot token
+const TOKEN = ''; 
 
 client.once('ready', () => {
   console.log(`${client.user.tag} is online!`);
@@ -29,9 +29,14 @@ const resetInactivityTimeout = (connection) => {
   }, 60000); // 1 minute of inactivity
 };
 
+const splitText = (text, maxLength) => {
+  const regex = new RegExp(`.{1,${maxLength}}`, 'g');
+  return text.match(regex);
+};
+
 const handleTTS = async (message, text, lang = 'en') => {
-  if (text.length > 300) {
-    message.reply('The message is too long. Please provide a message with at most 300 characters.');
+  if (text.length > 500) {
+    message.reply('The message is too long. Please provide a message with at most 500 characters.');
     return;
   }
 
@@ -43,25 +48,32 @@ const handleTTS = async (message, text, lang = 'en') => {
         adapterCreator: message.guild.voiceAdapterCreator,
       });
 
-      const url = googleTTS.getAudioUrl(text, {
+      const textChunks = splitText(text, 200);
+      const urls = textChunks.map(chunk => googleTTS.getAudioUrl(chunk, {
         lang: lang, // Use the extracted or default language code
         slow: false,
         host: 'https://translate.google.com',
-      });
+      }));
 
       const player = createAudioPlayer();
-      const resource = createAudioResource(url, {
-        inputType: ffmpeg,
-      });
-      player.play(resource);
+
+      const playNext = () => {
+        if (urls.length === 0) {
+          resetInactivityTimeout(connection);
+          return;
+        }
+
+        const url = urls.shift();
+        const resource = createAudioResource(url, {
+          inputType: ffmpeg,
+        });
+        player.play(resource);
+      };
+
+      player.on(AudioPlayerStatus.Idle, playNext);
 
       connection.subscribe(player);
-
-      player.on(AudioPlayerStatus.Idle, () => {
-        resetInactivityTimeout(connection);
-      });
-
-      resetInactivityTimeout(connection); // Start the inactivity timer
+      playNext(); // Start playing the first chunk
 
     } catch (error) {
       console.error('Error connecting to voice channel:', error);
@@ -110,8 +122,11 @@ client.on('messageCreate', async (message) => {
     message.reply('Long TTS mode disabled.');
 
   } else if (longTTSUsers.has(message.author.id)) {
-    const lang = longTTSUsers.get(message.author.id);
-    await handleTTS(message, message.content, lang);
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    if (!message.content.startsWith('-play') && !urlRegex.test(message.content)) {
+      const lang = longTTSUsers.get(message.author.id);
+      await handleTTS(message, message.content, lang);
+    }
 
   } else if (message.content === '!leave') {
     const connection = getVoiceConnection(message.guild.id);
