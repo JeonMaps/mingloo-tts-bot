@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits } = require('discord.js');
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, getVoiceConnection } = require('@discordjs/voice');
-const googleTTS = require('google-tts-api'); // Text-to-Speech API
-const ffmpeg = require('ffmpeg-static'); // FFmpeg binary
+const googleTTS = require('google-tts-api');
+const ffmpeg = require('ffmpeg-static'); 
 
 const client = new Client({
   intents: [
@@ -50,7 +50,7 @@ const handleTTS = async (message, text, lang = 'en') => {
 
       const textChunks = splitText(text, 200);
       const urls = textChunks.map(chunk => googleTTS.getAudioUrl(chunk, {
-        lang: lang, // Use the extracted or default language code
+        lang: lang, 
         slow: false,
         host: 'https://translate.google.com',
       }));
@@ -89,13 +89,12 @@ client.on('messageCreate', async (message) => {
 
   if (message.content.startsWith('!tts')) {
     const args = message.content.slice(5).trim().split(' ');
-    let lang = 'en'; // Default language
+    let lang = 'en'; 
     let text = args.join(' ');
 
-    // Check if the last argument is a language code prefixed with a hyphen
     if (args.length > 1 && args[args.length - 1].startsWith('/')) {
-      lang = args.pop().substring(1); // Extract the language code without the hyphen
-      text = args.join(' '); // Join the remaining args as the text
+      lang = args.pop().substring(1); 
+      text = args.join(' '); 
     }
 
     if (!text) {
@@ -107,9 +106,8 @@ client.on('messageCreate', async (message) => {
 
   } else if (message.content.startsWith('!longtts')) {
     const args = message.content.split(' ');
-    let lang = 'en'; // Default language
+    let lang = 'en'; 
 
-    // Check if a language code is provided
     if (args.length > 1) {
       lang = args[1];
     }
@@ -123,7 +121,7 @@ client.on('messageCreate', async (message) => {
 
   } else if (longTTSUsers.has(message.author.id)) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
-    if (!message.content.startsWith('-play') && !urlRegex.test(message.content)) {
+    if (!message.content.startsWith('-') && !message.content.startsWith(':') && !message.content.startsWith('<') && !urlRegex.test(message.content)) {
       const lang = longTTSUsers.get(message.author.id);
       await handleTTS(message, message.content, lang);
     }
