@@ -26,7 +26,7 @@ const resetInactivityTimeout = (connection) => {
   inactivityTimeout = setTimeout(() => {
     connection.destroy();
     inactivityTimeout = null;
-  }, 60000); // 1 minute of inactivity
+  }, 6000000); // 1 minute of inactivity
 };
 
 const splitText = (text, maxLength) => {
@@ -73,7 +73,7 @@ const handleTTS = async (message, text, lang = 'en') => {
       player.on(AudioPlayerStatus.Idle, playNext);
 
       connection.subscribe(player);
-      playNext(); // Start playing the first chunk
+      playNext(); 
 
     } catch (error) {
       console.error('Error connecting to voice channel:', error);
