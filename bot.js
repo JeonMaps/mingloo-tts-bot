@@ -104,7 +104,7 @@ const handleTTS = async (message, text, lang = 'en') => {
 };
 
 const handleCustomVoiceTTS = async (message, text, voiceId, lang = 'en') => {
-  if (text.length > 500) {
+  if (text.length > 1000) {
     message.reply('The message is too long. Please provide a message with at most 500 characters.');
     return;
   }
