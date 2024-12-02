@@ -45,7 +45,7 @@ const resetInactivityTimeout = (connection) => {
   inactivityTimeout = setTimeout(() => {
     connection.destroy();
     inactivityTimeout = null;
-  }, 6000000);
+  }, 600000);
 };
 
 const splitText = (text, maxLength) => {
@@ -117,14 +117,6 @@ const handleCustomVoiceTTS = async (message, text, voiceId, lang = 'en') => {
         adapterCreator: message.guild.voiceAdapterCreator,
       });
 
-      // const response = await playht.generateTTS({
-      //   text: text,
-      //   voice: 'en_us_male', // You can specify the voice here
-      //   quality: 'high',
-      // });
-
-      // const audioUrl = response.audioUrl;
-
       PlayHT.init({
         apiKey: PLAY_HT_API_KEY,
         userId: PLAY_HT_USER_ID,
@@ -150,7 +142,7 @@ const handleCustomVoiceTTS = async (message, text, voiceId, lang = 'en') => {
         resetInactivityTimeout(connection);
       });
 
-      resetInactivityTimeout(connection); // Start the inactivity timer
+      resetInactivityTimeout(connection); 
 
     } catch (error) {
       console.error('Error connecting to voice channel:', error);
