@@ -213,6 +213,10 @@ client.on('messageCreate', async (message) => {
     processTTSCommand(message, '!frantts', FRAN_ID);
   } else if (message.content.startsWith('!shimoltts')) {
     processTTSCommand(message, '!shimoltts', SHIMOL_ID);
+  } else if (message.content === '!languages') {
+    const availableLanguages = `
+    en: English, af: Afrikaans, ar: Arabic, bg: Bulgarian, bn: Bengali, ca: Catalan, cs: Czech, da: Danish, de: German, el: Greek, es: Spanish, fi: Finnish, fil: Filipino, fr: French, hi: Hindi, hu: Hungarian, id: Indonesian, it: Italian, ja: Japanese, ko: Korean, nl: Dutch, no: Norwegian, pl: Polish, pt: Portuguese, ro: Romanian, ru: Russian, sk: Slovak, sv: Swedish, ta: Tamil, th: Thai, tr: Turkish, uk: Ukrainian, vi: Vietnamese, zh: Chinese`;
+    message.reply(availableLanguages);
   }
 });
 
